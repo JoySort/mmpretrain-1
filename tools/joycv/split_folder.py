@@ -2,8 +2,8 @@ import os
 import random
 import shutil
 
-src_root_path = "/opt/workspace/imagedb/chestnut_core_sliced/0318_boosted/"
-dst_root_path = "/opt/workspace/imagedb/chestnut_core_sliced/0318_boosted_regroup/train"
+src_root_path = "/nas/win_essd/medjool_inference/raw_selected_data/_nas_win_essd_imagedb_spacco_train_candidate_raw_selected_data20230901/"
+dst_root_path = "/nas/win_essd/medjool_training_wrong/"
 group_number = 100  # specify the number of groups for each category folder
 
 
@@ -38,7 +38,7 @@ def split_images(src_path, dst_path):
             group_count += 1
 
         # shuffle the image files
-        random.shuffle(image_files)
+        #random.shuffle(image_files)
 
         # loop through groups
         for group_index in range(group_count):
@@ -52,12 +52,13 @@ def split_images(src_path, dst_path):
             group_end = (group_index + 1) * group_number
             for i, image_file in enumerate(image_files[group_start:group_end]):
                 _, ext = os.path.splitext(image_file)
-                dst_file_name = f"{category_folder}_{i+1}{ext}"
+                original_name=os.path.basename(image_file)
+                dst_file_name = f"{original_name}_{i+1}{ext}"
                 dst_file_path = os.path.join(group_dst_folder, dst_file_name)
                 shutil.copy(image_file, dst_file_path)
 
 # split images in train folder
-#split_images(os.path.join(src_root_path, 'train'), dst_root_path)
+#split_images(os.path.join(src_root_path, 'correct'), dst_root_path)
 
 # split images in test folder
-split_images(os.path.join(src_root_path, 'test'), dst_root_path)
+split_images(os.path.join(src_root_path, 'wrong'), dst_root_path)

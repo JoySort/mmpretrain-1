@@ -1,32 +1,13 @@
 _base_ = 'mmpretrain::repvgg/repvgg-A0_8xb32_in1k.py'
 
 train_max_epochs=1000
-#训练微调参数
-#关于 dropout的使用原则： 
-#Dropout是一种用于防止过拟合的技术，可以随机丢弃神经元的输出，以减少神经元之间的依赖关系，促进网络泛化能力的提升。
-#Dropout的取值范围在0到1之间，代表着丢弃神经元的比例。一般来说，0.5是一个较好的起点，可以逐步增加或减少，观察训练效果，选择最优值。
-#当网络较小时，可以采用较小的dropout，避免过度减少网络容量，导致欠拟合。而当网络较大时，可以采用较大的dropout，以增加网络的泛化能力，防止过拟合。
-dropout=0.7
-
-#关于batch size的使用原则：
-#Batch size是指每次训练所用的样本数，一般情况下，batch size越大，训练速度越快，但是对于内存和显存的需求也越高，因此需要根据具体情况进行选择。
-#当样本数量较少时，可以适当增大batch size，以充分利用计算资源，提高训练效率。但是当样本数量较大时，可以选择较小的batch size，以避免内存和显存不足导致训练失败。
-#一般经验，针对repvgg模型，8G 显存224图片可以支持到128，12G显存224图片可以支持到256。简单的
-#另外，较大的batch size可能会导致过拟合，因此需要在训练过程中观察训练集和验证集的loss和accuracy，及时调整batch size大小，避免过拟合的发生。
 batch_size=256 
+image_size=256
 
 data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_candidate/"
-
+data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_candidate_correction/"
 checkpoint_config = dict(interval=25)
 train_cfg = dict(by_epoch=True, max_epochs=train_max_epochs, val_interval=1)
-
-
-
-#data_root='/opt/images/UAE/pd_train_candidate/intermediate_model_candidate/'
-
-
-
-
 
 def extract_category_info(data_root):
     import os
@@ -61,7 +42,7 @@ test_stats=count_images_in_subfolders(os.path.join(data_root, "test"))
 classes=extract_category_info(os.path.join(data_root, "train"))
 print("classes",classes)
 classes.sort()
-print("classes",classes)
+print("classes after sorting",classes)
 #classes=count_classes(train_ann_file)
 
 num_classes = len(classes)
@@ -79,7 +60,7 @@ model = dict(
     _scope_='mmpretrain')
 # dataset settings
 
-image_size=256
+
 dataset_type = 'CustomDataset'
 data_preprocessor = dict(
     num_classes=num_classes,
@@ -174,20 +155,20 @@ policies = [
 ]
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='RandomResizedCrop', scale=image_size, backend='pillow'),
+    dict(type='ResizeEdge', scale=image_size, edge='short', backend='pillow'),
     dict(type='RandomFlip', prob=0.5, direction='horizontal'),
-    # dict(
-    #     type='RandAugment',
-    #     policies=policies,
-    #     num_policies=8,
-    #     magnitude_level=12),
+    dict(type='RandomFlip', prob=0.5, direction='vertical'),
+    dict(
+        type='RandAugment',
+        policies=policies,
+        num_policies=8,
+        magnitude_level=12),
     dict(type='PackInputs'),
 ]
 
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='ResizeEdge', scale=image_size, edge='short', backend='pillow'),
-    dict(type='CenterCrop', crop_size=image_size),
     dict(type='PackInputs'),
 ]
 
@@ -222,17 +203,22 @@ test_evaluator = val_evaluator
 
 
 default_hooks = dict(
-    checkpoint=dict(interval=10, max_keep_ckpts=3, save_best='auto'),
+    checkpoint=dict(interval=10, max_keep_ckpts=5, save_best='auto'),
     logger=dict(type='LoggerHook', interval=5)
     )
 import platform
 wandb_name=data_root.split("/")[-1]
 if(wandb_name==""):
     wandb_name=data_root.split("/")[-2]
-wandb_name=f"dataset{wandb_name}-maxep_{train_max_epochs}-{platform.node()}"
+wandb_name=f"dataset{wandb_name}-batchsize_{batch_size}-maxep_{train_max_epochs}-{platform.node()}"
+plan_name=f"{_base_.model.backbone.type}-image_size_{image_size}_batch_size{batch_size}-{wandb_name}"
 visualizer = dict(
     vis_backends = [
         dict(type='LocalVisBackend'),
         dict(type='TensorboardVisBackend'), 
-        dict(type='WandbVisBackend', init_kwargs={'project': f'palmdate-cls','name':f"{_base_.model.backbone.type}-image_size_{image_size}_batch_size{batch_size}-{wandb_name}"},)
+        dict(type='WandbVisBackend',
+        init_kwargs={'project': f'palmdate-cls','name':plan_name},)
     ]) # noqa
+import datetime    
+work_src=f"./work_dirs/palmdate_cls_{plan_name}/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+work_dir=f"{work_src}/out/"

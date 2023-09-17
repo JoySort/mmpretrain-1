@@ -45,7 +45,6 @@ def inference(image_path,inferencer,targetID,output_path,recursive=False,split=F
     stats_counter={}
     import shutil
     begin_time=time.time()
-    inference_time=[];
     total=len(image_list)
     for image_file in image_list:
         img = mmcv.imread(image_file)
@@ -74,7 +73,6 @@ def inference(image_path,inferencer,targetID,output_path,recursive=False,split=F
         top2_score = scores[top2_score_index]
 
         image_end_time=time.time()
-        inference_time.append(image_end_time-image_begin_time)
         #print(f"single image timetook:{image_end_time-image_begin_time:.4f}")
         counter=counter+1
         #model.CLASSES[result['pred_label']]
@@ -95,35 +93,19 @@ def inference(image_path,inferencer,targetID,output_path,recursive=False,split=F
         
         sub_folder_index=int(round(class_score,1)*10)
         file_path=sub_folders[sub_folder_index]
-        os.makedirs(f"{file_path}/{result['pred_class']}/{second_label}/", exist_ok=True)
-        mmcv.imwrite(inference_img,f"{file_path}/{result['pred_class']}/{second_label}/{class_label}-{class_score:.5f}-{second_label}{second_score:.5f}-{filename}.png")
+
+        output_final_path=f"{file_path}/{result['pred_class']}/{second_label}/"
+        if(class_score >= 0.85 ):
+            output_final_path=f"{file_path}/{result['pred_class']}/{result['pred_class']}/"
+
+        
+
+        os.makedirs(output_final_path, exist_ok=True)
+        mmcv.imwrite(inference_img,f"{output_final_path}/{class_label}-{class_score:.5f}-{second_label}{second_score:.5f}-{filename}.jpg")
 
         if(counter % 10 ==0 or counter == total):
             print(f"total image: {counter}, stats: [{stats_counter}]percent:{stats_percent} avg timetook:{(time.time()-begin_time)/counter:.4f}")
-            # Calculate max, min, and mean
-            max_time = max(inference_time)
-            min_time = min(inference_time)
-            mean_time = np.mean(inference_time)  # You can also use sum(inference_time) / len(inference_time)
-
-            # Print the statistics
-            print("Stats:")
-            print("Count: ", len(inference_time))
-            print("Max: ", max_time)
-            print("Min: ", min_time)
-            print("Mean: ", mean_time)
-
-
-    # Calculate max, min, and mean
-    max_time = max(inference_time)
-    min_time = min(inference_time)
-    mean_time = np.mean(inference_time)  # You can also use sum(inference_time) / len(inference_time)
-
-    # Print the statistics
-    print("Final Stats:")
-    print("Count: ", len(inference_time))
-    print("Max: ", max_time)
-    print("Min: ", min_time)
-    print("Mean: ", mean_time)
+    
     stats_obj=dict(
         count=stats_counter,
         percentile=stats_percent
@@ -212,16 +194,27 @@ def count_jpg_files(root_path):
 #for bad_img_path_test in bad_img_paths_test:
 #    inference(bad_img_path_test,0)
 
-src_path="/opt/workspace/imagedb/ximei/"
-src_path="/nas/win_essd/西梅/good150_slice/1691709712/slice/"
-src_path="/nas/win_essd/UAE_sliced_256/mid_east_dates/sau"
+src_path="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
+src_path="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/yellow_slict_normal_calxy"
+#class_config_file="/opt/workspace/mmcls_gitee/work_dirs/chestnut_core_repvgg/2023-03-20_09-49-39/out/class_config.json"
+src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_staging/seqee_4box_mix/"
+#src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_sliced/16941848592/slice/"
+output_path=f"/nas/win_essd/BaiduNetdiskDownload/seqee_inference/"
 
-class_config_file="/opt/workspace/mmcls_gitee/work_dirs/chestnut_core_repvgg/2023-03-20_09-49-39/out/class_config.json"
-output_path=f"/nas/win_essd/西梅/inference/"
-output_path=f"/nas/win_essd/pd_inference/"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/palmdate_repvgg/epoch_1000.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/palmdate_repvgg/20230702_144150/vis_data/config.py"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain_folder-batchsize_256-maxep_1000-joysort-ai-server/2023-08-31_18-36-21/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain_folder-batchsize_256-maxep_1000-joysort-ai-server/2023-08-31_18-36-21/out/epoch_290.pth"
 
-config_file = '/opt/workspace/mmpretrain-1/work_dirs/palmdate_cls_MobileViT-image_size_256_batch_size32-datasetintermediate_model_candidate_correction-batchsize_32-maxep_1000-joysort-ai-server/2023-08-21_00-53-41/out/20230821_005406/vis_data/config.py'
-checkpoint_file = '/opt/workspace/mmpretrain-1/work_dirs/palmdate_cls_MobileViT-image_size_256_batch_size32-datasetintermediate_model_candidate_correction-batchsize_32-maxep_1000-joysort-ai-server/2023-08-21_00-53-41/out/epoch_300.pth'
+config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/epoch_590.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain3-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_16-04-50/out/20230916_160450/vis_data/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain3-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_16-04-50/out/epoch_80.pth"
+
+config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-17_17-42-18/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-17_17-42-18/out/epoch_190.pth"
+
+
 
 try:
         pretrained = checkpoint_file or True
@@ -234,7 +227,7 @@ except ValueError:
         'https://mmpretrain.readthedocs.io/en/latest/modelzoo_statistics.html#all-checkpoints'  # noqa: E501
     )
 classes=inferencer.classes
-print("classes",classes)   
+#print("classes",classes)   
 image_path_name="_".join(src_path.split("/"))
 checkpoint_name=os.path.basename(checkpoint_file).split(".")[0]
 actual_output_path=f"{output_path}{checkpoint_name}_{image_path_name}/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"

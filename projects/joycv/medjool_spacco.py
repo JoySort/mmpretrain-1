@@ -1,18 +1,14 @@
-#_base_ = 'mmpretrain::repvgg/repvgg-A0_8xb32_in1k.py' #1.36 - 72.37
-#_base_ = 'mmpretrain::levit/levit-256_8xb256_in1k.py' #1.14 - 81.59
-_base_ = 'mmpretrain::mobilevit/mobilevit-small_8xb128_in1k.py'
-
-
-
-
-
+_base_ = 'mmpretrain::repvgg/repvgg-A0_8xb32_in1k.py'
+project_name="medjool_cls"
 train_max_epochs=1000
-
-batch_size=32 
+batch_size=256 
 image_size=256
-data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_candidate_correction/"
-#data_root="/nas/win_essd/西梅/训练样本/"
 
+data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_candidate/"
+data_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder"
+data_root="/nas/win_essd/medjool_training/train2"
+data_root="/nas/win_essd/medjool_training/train3"
+data_root="/nas/win_essd/medjool_training/train5"
 checkpoint_config = dict(interval=25)
 train_cfg = dict(by_epoch=True, max_epochs=train_max_epochs, val_interval=1)
 
@@ -214,6 +210,7 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=5)
     )
 import platform
+
 wandb_name=data_root.split("/")[-1]
 if(wandb_name==""):
     wandb_name=data_root.split("/")[-2]
@@ -224,9 +221,8 @@ visualizer = dict(
         dict(type='LocalVisBackend'),
         dict(type='TensorboardVisBackend'), 
         dict(type='WandbVisBackend',
-        init_kwargs={'project': f'palmdate-cls','name':plan_name},)
+        init_kwargs={'project': project_name,'name':plan_name},)
     ]) # noqa
 import datetime    
-
-work_src=f"./work_dirs/palmdate_cls_{plan_name}/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+work_src=f"./work_dirs/{project_name}_{plan_name}/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
 work_dir=f"{work_src}/out/"

@@ -1,19 +1,36 @@
-from mmcls.apis import init_model, inference_model
 import mmcv
 import time,os
 import json
+import numpy as np
+import shutil
 import datetime
-import numpy as np 
+# Copyright (c) OpenMMLab. All rights reserved.
+from argparse import ArgumentParser
 
-from clearml import Task
+from mmengine.fileio import dump
+from rich import print_json
+
+from mmpretrain.apis import ImageClassificationInferencer
 def validation_inference(validation_root_path,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=False):
     import glob
     import time
     import platform
     from datetime import datetime as dt
     now = dt.now()
-    timestr=now.strftime("%Y%m%d_%H:%M:%S")
+    timestr=now.strftime("%Y%m%d_%H_%M_%S")
     root_dir = validation_root_path
+    try:
+        pretrained = checkpoint_file or True
+        inferencer = ImageClassificationInferencer(
+            config_file, pretrained=pretrained)
+    except ValueError:
+        raise ValueError(
+            f'Unavailable model "{checkpoint_file}", you can specify find a model '
+            'name or a config file or find a model name from '
+            'https://mmpretrain.readthedocs.io/en/latest/modelzoo_statistics.html#all-checkpoints'  # noqa: E501
+        )
+    classes=inferencer.classes
+    print("classes",classes)  
 
     image_list_map = {}
     for dirpath, _, filenames in os.walk(root_dir):
@@ -43,8 +60,8 @@ def validation_inference(validation_root_path,config_file,checkpoint_file,valida
     else:
         print(f"len(image_list) {len(image_list)}")
 
-    model = init_model(config_file, checkpoint_file, device='cuda:0')
-    model_name=os.path.basename(config_file).split(".")[0].split("_p")[0]
+    
+    #model_name=os.path.basename(config_file).split(".")[0].split("_p")[0]
 
     validation_path_name=os.path.basename(validation_root_path)
 
@@ -67,16 +84,35 @@ def validation_inference(validation_root_path,config_file,checkpoint_file,valida
         #img = mmcv.imrescale(img,scale=(500,1220,3))     
         #print(image_file)
         filename=os.path.basename(image_file)
-        filename=filename.split(".")[0]
-        foldername="_".join(image_file.split("/")[-4:-2])
+        filename=filename.split(".")[:-1]
+        foldername="_".join(image_file.split("/")[-3:-2])
+
         image_begin_time=time.time()
         inference_img=img
-        result2,score = inference_model(model,inference_img )
+        result = inferencer(inference_img, show=False)[0]#inference_model(model,inference_img )
+        # show the results
+        scores = result.pop('pred_scores')  # pred_scores is too verbose for a demo.
+        #score=result
+        
+        #print(scores)
+        sorted_indices = np.argsort(scores)[::-1]
+
+        # the index of the second highest score is the second element in this sorted list of indices
+        top2_score_index = sorted_indices[1]
+
+        # and the second highest score is
+        top2_score = scores[top2_score_index]
         image_end_time=time.time()
         #print(f"single image timetook:{image_end_time-image_begin_time:.4f}")
         inference_time=image_end_time-image_begin_time
         inference_time_list.append(inference_time)
-        inference_label=result2["pred_class"]
+               
+        class_label=result['pred_class']
+        class_score=result['pred_score']
+        second_label=classes[top2_score_index]
+        second_score=top2_score
+
+        inference_label=class_label
         if inference_label not in inference_counter:
             inference_counter[inference_label]=0
             #print(f"Found inference label {inference_label}")
@@ -108,7 +144,7 @@ def validation_inference(validation_root_path,config_file,checkpoint_file,valida
             output_path=f"{validation_output_path_root}/correct/{expected_label}"
 
         os.makedirs(output_path,exist_ok=True)
-        mmcv.imwrite(inference_img,f"{output_path}/{result2['pred_label']}-{result2['pred_class']}-{result2['pred_score']}{foldername}_{filename}.jpg")
+        mmcv.imwrite(inference_img,f"{output_path}/{inference_label}_{class_score:.2f}_{second_label}-{second_score:.2f}-expct_{expected_label}_{filename}.jpg")
         
         if correction_ops and (inference_label!=expected_label) :
             removed_file.append(image_file)
@@ -136,7 +172,7 @@ def validation_inference(validation_root_path,config_file,checkpoint_file,valida
     result_stats["incorrect_rate"]=stats
 
     result_stats["total_counter"]=counter
-    result_stats["model_name"]=model_name
+    #result_stats["model_name"]=model_name
     result_stats["time_took_avg"]=time_took_avg
     result_stats["inference_time_avg"]=inference_time_avg
     result_stats["total_counter"]=counter
@@ -219,13 +255,24 @@ config_file = '/opt/workspace/mmpretrain-1/work_dirs/ximei_repvgg/config.py'
 checkpoint_file = '/opt/workspace/mmpretrain-1/work_dirs/ximei_repvgg/best_accuracy_top1_epoch_165.pth'
 
 
+config_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain3-batchsize_256-maxep_1000-joysort-ai-server/2023-09-05_06-30-33/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain3-batchsize_256-maxep_1000-joysort-ai-server/2023-09-05_06-30-33/out/epoch_160.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server/2023-09-08_21-16-13/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server/2023-09-08_21-16-13/out/epoch_460.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/20230916_062859/vis_data/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/epoch_590.pth"
+
 
 validation_root = "/opt/workspace/imagedb/packs/trained/"
 validation_root = "/opt/workspace/imagedb/packs/1202_untrained/"
 validation_root = "/opt/workspace/imagedb/chestnut_core_sliced/formal_training_regrouped_0314/test"
 validation_root = "/opt/workspace/imagedb/ximei/"
+validation_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
+validation_root="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/raw_selected_data"
+validation_root="/nas/win_essd/seqee_training/selected/"
 
-validation_discrepency_cp_path="/opt/workspace/imagedb/eval/"
 
-validation_inference(validation_root,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=False)
+validation_discrepency_cp_path="/nas/win_essd/BaiduNetdiskDownload/seqee_inference/"
+
+validation_inference(validation_root,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=True)
 #chmod_recursive(validation_discrepency_cp_path)
