@@ -259,9 +259,11 @@ config_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size
 checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain3-batchsize_256-maxep_1000-joysort-ai-server/2023-09-05_06-30-33/out/epoch_160.pth"
 config_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server/2023-09-08_21-16-13/out/config.py"
 checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_size_256_batch_size256-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server/2023-09-08_21-16-13/out/epoch_460.pth"
-config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/20230916_062859/vis_data/config.py"
-checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_size_256_batch_size256-datasettrain2-batchsize_256-maxep_1000-joysort-ai-server/2023-09-16_06-27-24/out/epoch_590.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain1-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-06_18-33-23/out/20231006_183437/vis_data/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain1-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-06_18-33-23/out/epoch_460.pth"
 
+config_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-07_08-06-23/out/20231007_080623/vis_data/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-07_08-06-23/out/epoch_500.pth"
 
 validation_root = "/opt/workspace/imagedb/packs/trained/"
 validation_root = "/opt/workspace/imagedb/packs/1202_untrained/"
@@ -269,10 +271,10 @@ validation_root = "/opt/workspace/imagedb/chestnut_core_sliced/formal_training_r
 validation_root = "/opt/workspace/imagedb/ximei/"
 validation_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
 validation_root="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/raw_selected_data"
-validation_root="/nas/win_essd/seqee_training/selected/"
+validation_root="/nas/win_essd/BaiduNetdiskDownload/khidry_inference/_nas_win_essd_BaiduNetdiskDownload_Khidri_cls_1006_20231006_23_43_31/correct/"
 
 
-validation_discrepency_cp_path="/nas/win_essd/BaiduNetdiskDownload/seqee_inference/"
+validation_discrepency_cp_path="/nas/win_essd/BaiduNetdiskDownload/khidry_inference/"
 
-validation_inference(validation_root,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=True)
+validation_inference(validation_root,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=False)
 #chmod_recursive(validation_discrepency_cp_path)

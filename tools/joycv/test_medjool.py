@@ -48,7 +48,7 @@ def inference(image_path,inferencer,targetID,output_path,recursive=False,split=F
     total=len(image_list)
     for image_file in image_list:
         img = mmcv.imread(image_file)
-        #print(image_file)
+        print(image_file)
         #img = mmcv.imrescale(img,scale=(500,1220,3))     
         #print(image_file)
         filename=os.path.basename(image_file)
@@ -57,13 +57,18 @@ def inference(image_path,inferencer,targetID,output_path,recursive=False,split=F
         filename="_".join(filename.split(".")[:-1])
         image_begin_time=time.time()
         inference_img=img
-        result = inferencer(inference_img, show=False)[0]
-        print(result)
+        try:
+            result = inferencer(inference_img, show=False)[0]
+        except:
+            print(f"removing file{image_file}");
+            os.remove(image_file);
+            continue
+        #print(result)
         # show the results
         scores = result.pop('pred_scores')  # pred_scores is too verbose for a demo.
         #score=result
         
-        print(scores)
+        #print(scores)
         sorted_indices = np.argsort(scores)[::-1]
 
         # the index of the second highest score is the second element in this sorted list of indices
@@ -198,7 +203,7 @@ src_path="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
 src_path="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/yellow_slict_normal_calxy"
 #class_config_file="/opt/workspace/mmcls_gitee/work_dirs/chestnut_core_repvgg/2023-03-20_09-49-39/out/class_config.json"
 src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_staging/seqee_4box_mix/"
-#src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_sliced/16941848592/slice/"
+#src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_100kg_zip/seqee_100kg.zip/seqee_100kg/"
 output_path=f"/nas/win_essd/BaiduNetdiskDownload/seqee_inference/"
 
 checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/palmdate_repvgg/epoch_1000.pth"
@@ -213,6 +218,8 @@ checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-image_si
 
 config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-17_17-42-18/out/config.py"
 checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain5-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-17_17-42-18/out/epoch_190.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain9-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-28_22-59-57/out/20230928_230057/vis_data/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain9-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-09-28_22-59-57/out/epoch_1000.pth"
 
 
 

@@ -2,9 +2,9 @@ import os
 import random
 import shutil
 
-src_root_path = "/nas/win_essd/medjool_inference/raw_selected_data/_nas_win_essd_imagedb_spacco_train_candidate_raw_selected_data20230901/"
-dst_root_path = "/nas/win_essd/medjool_training_wrong/"
-group_number = 100  # specify the number of groups for each category folder
+src_root_path = "/nas/win_essd/khalas_calxy_training/correct/none_calxy/"
+dst_root_path = "/nas/win_essd/khalas_calxy_training/correct/none_calxy/none_calxy_2_grouped/"
+group_number = 300  # specify the number of groups for each category folder
 
 
 # function to get all image files within a given directory
@@ -61,4 +61,4 @@ def split_images(src_path, dst_path):
 #split_images(os.path.join(src_root_path, 'correct'), dst_root_path)
 
 # split images in test folder
-split_images(os.path.join(src_root_path, 'wrong'), dst_root_path)
+split_images(os.path.join(src_root_path, 'none_calxy2'), dst_root_path)

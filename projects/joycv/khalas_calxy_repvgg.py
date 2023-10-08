@@ -1,14 +1,10 @@
 _base_ = 'mmpretrain::repvgg/repvgg-A0_8xb32_in1k.py'
-project_name="seqee_cls"
+project_name="khalas_calxy_cls"
 train_max_epochs=1000
 batch_size=256 
 image_size=256
 
-data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_candidate/"
-data_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder"
-data_root="/nas/win_essd/medjool_training/train2"
-data_root="/nas/win_essd/medjool_training/train3"
-data_root="/nas/win_essd/seqee_training/train1004"
+data_root="/nas/win_essd/khalas_calxy_training/train3/"
 checkpoint_config = dict(interval=25)
 train_cfg = dict(by_epoch=True, max_epochs=train_max_epochs, val_interval=1)
 
