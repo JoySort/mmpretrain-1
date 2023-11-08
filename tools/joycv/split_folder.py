@@ -2,8 +2,8 @@ import os
 import random
 import shutil
 
-src_root_path = "/nas/win_essd/khalas_calxy_training/correct/none_calxy/"
-dst_root_path = "/nas/win_essd/khalas_calxy_training/correct/none_calxy/none_calxy_2_grouped/"
+src_root_path = "/nas/win_essd/seqee_training/selected/"
+dst_root_path = "/nas/win_essd/seqee_training/selected_grouped/"
 group_number = 300  # specify the number of groups for each category folder
 
 
@@ -61,4 +61,4 @@ def split_images(src_path, dst_path):
 #split_images(os.path.join(src_root_path, 'correct'), dst_root_path)
 
 # split images in test folder
-split_images(os.path.join(src_root_path, 'none_calxy2'), dst_root_path)
+split_images(os.path.join(src_root_path), dst_root_path)

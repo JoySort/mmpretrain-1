@@ -8,7 +8,7 @@ data_root="/nas/win_essd/UAE_sliced_256/pd_train_candidate/intermediate_model_ca
 data_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder"
 data_root="/nas/win_essd/medjool_training/train2"
 data_root="/nas/win_essd/medjool_training/train3"
-data_root="/nas/win_essd/medjool_training/train5"
+data_root="/nas/win_essd/medjool_training/train6"
 checkpoint_config = dict(interval=25)
 train_cfg = dict(by_epoch=True, max_epochs=train_max_epochs, val_interval=1)
 

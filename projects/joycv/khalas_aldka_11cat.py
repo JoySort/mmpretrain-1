@@ -1,12 +1,11 @@
+
 _base_ = 'mmpretrain::repvgg/repvgg-A0_8xb32_in1k.py'
-#_base_ = 'mmpretrain::mobilevit/mobilevit-small_8xb128_in1k.py'
-
-project_name="khalas_calxy_cls"
-train_max_epochs=20
+project_name="khalos_aldka_cls"
+train_max_epochs=500
 batch_size=256 
-image_size=224
+image_size=256
 
-data_root="/nas/win_essd/khalas_calxy_training/train3/"
+data_root="/opt/image_store/aldka_khalos/training/train1025_2/"
 checkpoint_config = dict(interval=25)
 train_cfg = dict(by_epoch=True, max_epochs=train_max_epochs, val_interval=1)
 
@@ -55,7 +54,7 @@ model = dict(
     type='ImageClassifier',
     head=dict(
         num_classes=num_classes,
-       # topk=(1,) 
+       # topk=(1, 5) 
         ),
        
     _scope_='mmpretrain')
@@ -78,12 +77,12 @@ policies = [
         magnitude_range=(0, 30),
         pad_val=0,
         prob=0.5,
-        random_negative_prob=0.9),
+        random_negative_prob=0.5),
     dict(
         type='Posterize',
         magnitude_key='bits',
         magnitude_range=(0, 4),
-        prob=0.7),
+        prob=0.5),
     dict(
         type='Solarize',
         magnitude_key='thr',
@@ -94,7 +93,7 @@ policies = [
         magnitude_key='magnitude',
         magnitude_range=(0, 110),
         thr=128,
-        prob=0.7),
+        prob=0.5),
     dict(
         type='ColorTransform',
         magnitude_key='magnitude',

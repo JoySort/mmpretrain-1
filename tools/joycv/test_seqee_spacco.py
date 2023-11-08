@@ -199,11 +199,6 @@ def count_jpg_files(root_path):
 #for bad_img_path_test in bad_img_paths_test:
 #    inference(bad_img_path_test,0)
 
-src_path="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
-src_path="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/yellow_slict_normal_calxy"
-#class_config_file="/opt/workspace/mmcls_gitee/work_dirs/chestnut_core_repvgg/2023-03-20_09-49-39/out/class_config.json"
-src_path="/nas/win_essd/BaiduNetdiskDownload/seqee_staging/seqee_4box_mix/"
-
 src_path="/nas/win_essd/BaiduNetdiskDownload/production_1014/"
 output_path=f"/opt/image_store/spaco_seqee/inference/"
 config_file="/opt/workspace/mmpretrain-1/work_dirs/seqee_cls_RepVGG-datasettrain1008_1-batchsize_256-maxep_1000-joysort-ai-server-image_size_256_batch_size256/2023-10-09_04-13-02/out/config.py"

@@ -262,8 +262,8 @@ checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/medjool_cls_RepVGG-image_
 config_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain1-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-06_18-33-23/out/20231006_183437/vis_data/config.py"
 checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain1-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-06_18-33-23/out/epoch_460.pth"
 
-config_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-07_08-06-23/out/20231007_080623/vis_data/config.py"
-checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/khidry_cls_RepVGG-datasettrain2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-07_08-06-23/out/epoch_500.pth"
+config_file="/opt/workspace/mmpretrain-1/work_dirs/khalos_aldka_cls_RepVGG-datasettrain1025_2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-26_09-23-11/out/config.py"
+checkpoint_file="/opt/workspace/mmpretrain-1/work_dirs/khalos_aldka_cls_RepVGG-datasettrain1025_2-batchsize_256-maxep_500-joysort-ai-server-image_size_256_batch_size256/2023-10-26_09-23-11/out/epoch_500.pth"
 
 validation_root = "/opt/workspace/imagedb/packs/trained/"
 validation_root = "/opt/workspace/imagedb/packs/1202_untrained/"
@@ -271,10 +271,10 @@ validation_root = "/opt/workspace/imagedb/chestnut_core_sliced/formal_training_r
 validation_root = "/opt/workspace/imagedb/ximei/"
 validation_root="/nas/win_essd/imagedb/spacco_train_candidate/train_folder/train"
 validation_root="/nas/win_essd/imagedb/spacco_train_candidate/to_be_validated/validate/raw_selected_data"
-validation_root="/nas/win_essd/BaiduNetdiskDownload/khidry_inference/_nas_win_essd_BaiduNetdiskDownload_Khidri_cls_1006_20231006_23_43_31/correct/"
+validation_root="/opt/image_store/aldka_khalos/raw/"
 
 
-validation_discrepency_cp_path="/nas/win_essd/BaiduNetdiskDownload/khidry_inference/"
+validation_discrepency_cp_path="/opt/image_store/aldka_khalos/validation/"
 
 validation_inference(validation_root,config_file,checkpoint_file,validation_discrepency_cp_path,correction_ops=False)
 #chmod_recursive(validation_discrepency_cp_path)
